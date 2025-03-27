@@ -60,7 +60,7 @@ server <- function(input, output, session) {
     
     if (is.null(result) || is.null(result$data)) {
       return(datatable(
-        data.frame(message = "No data available. Try refreshing."),
+        data.frame(message = "No data available."),
         options = list(dom = 't'),
         rownames = FALSE
       ))
