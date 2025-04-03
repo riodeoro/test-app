@@ -1,8 +1,5 @@
 # Workflow derived from https://github.com/posit-dev/r-shinylive/tree/actions-v1/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
-#
-# Basic example of a GitHub Actions workflow that builds a Shiny app and deploys
-# it to GitHub Pages.
 name: Deploy app to gh-pages
 
 on:
@@ -21,3 +18,7 @@ jobs:
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
+    # Pass environment variables to the workflow
+    with:
+      # Additional build arguments if needed
+      build_args: "--env-vars API_SYSTEM_KEY=${{ secrets.API_SYSTEM_KEY }}"
