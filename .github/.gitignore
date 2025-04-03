@@ -1,1 +1,20 @@
 *.html
+# R specific files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Environment variables and secret keys
+.env
+.Renviron
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Shiny temporary files
+*.rds
+
+# Local development files
+dev/
