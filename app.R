@@ -16,7 +16,21 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   fetchData <- function() {
-    api_url <- "https://el-086-api.elements360.aem.eco/aem/DataAPI?method=GetSiteMetaData&system_key=6af158e4-53d9-4747-ad67-71197f689e1f&format=xml"
+    # Get API key from environment variables
+    system_key <- Sys.getenv("API_SYSTEM_KEY")
+    
+    if (system_key == "") {
+      return(list(
+        status = "Error: API_SYSTEM_KEY environment variable not set",
+        data = NULL
+      ))
+    }
+    
+    api_url <- paste0(
+      "https://el-086-api.elements360.aem.eco/aem/DataAPI?method=GetSiteMetaData&system_key=",
+      system_key,
+      "&format=xml"
+    )
     
     tryCatch({
       xml_content <- readLines(url(api_url))
