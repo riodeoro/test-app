@@ -19,7 +19,3 @@ jobs:
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
-# Pass environment variables to the workflow
-    with:
-      # Additional build arguments if needed
-      build_args: "--env-vars API_SYSTEM_KEY=${{ secrets.API_SYSTEM_KEY }}"
