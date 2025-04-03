@@ -15,6 +15,8 @@ on:
 jobs:
   shinylive:
     uses: posit-dev/r-shinylive/.github/workflows/deploy-app.yaml@actions-v1
+      env:
+  API_SYSTEM_KEY: ${{ secrets.API_SYSTEM_KEY }}
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
       pages: write # to deploy to Pages
