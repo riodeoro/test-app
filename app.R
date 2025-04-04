@@ -2,6 +2,9 @@ library(shiny)
 library(xml2)
 library(DT)
 
+# Get API key from environment variable
+system_key <- Sys.getenv("ELEMENTS_SYSTEM_KEY")
+
 ui <- fluidPage(
   titlePanel("Test app"),
   
@@ -16,8 +19,20 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   fetchData <- function() {
-    # Original API URL
-    original_api_url <- "https://el-086-api.elements360.aem.eco/aem/DataAPI?method=GetSiteMetaData&system_key=6af158e4-53d9-4747-ad67-71197f689e1f&format=xml"
+    # Check if system key is available
+    if (system_key == "") {
+      return(list(
+        status = "Error: API key not configured. Please set ELEMENTS_SYSTEM_KEY environment variable.",
+        data = NULL
+      ))
+    }
+    
+    # Original API URL with key from environment variable
+    original_api_url <- paste0(
+      "https://el-086-api.elements360.aem.eco/aem/DataAPI?method=GetSiteMetaData&system_key=",
+      system_key,
+      "&format=xml"
+    )
     
     # Apply CORS proxy
     api_url <- paste0("https://corsproxy.io/?key=17c539c4", URLencode(original_api_url))
