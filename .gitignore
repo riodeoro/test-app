@@ -1,0 +1,22 @@
+# R specific
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Environment files with sensitive information
+.env
+.Renviron
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+
+# Shiny specific
+rsconnect/
