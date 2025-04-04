@@ -14,21 +14,8 @@ on:
   pull_request:
 jobs:
   shinylive:
-    runs-on: ubuntu-latest
+    uses: posit-dev/r-shinylive/.github/workflows/deploy-app.yaml@actions-v1
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
-      contents: write # needed for deployment
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      
-      - name: Create .Renviron file
-        run: |
-          echo "ELEMENTS_SYSTEM_KEY=${{ secrets.ELEMENTS_SYSTEM_KEY }}" > .Renviron
-      
-      - name: Setup and deploy with r-shinylive
-        uses: posit-dev/r-shinylive/.github/workflows/deploy-app.yaml@actions-v1
-      
