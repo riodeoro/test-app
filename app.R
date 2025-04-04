@@ -1,46 +1,29 @@
 library(shiny)
 library(xml2)
 library(DT)
-
-# Get API key from environment variable
-system_key <- Sys.getenv("ELEMENTS_SYSTEM_KEY")
-
 ui <- fluidPage(
   titlePanel("Test app"),
-  
+
   verbatimTextOutput("connectionStatus"),
-  
+
   h4("Site Data"),
   DTOutput("siteTable"),
-  
+
   h4("Raw Response"),
   verbatimTextOutput("rawResponse")
 )
-
 server <- function(input, output, session) {
   fetchData <- function() {
-    # Check if system key is available
-    if (system_key == "") {
-      return(list(
-        status = "Error: API key not configured. Please set ELEMENTS_SYSTEM_KEY environment variable.",
-        data = NULL
-      ))
-    }
-    
-    # Original API URL with key from environment variable
-    original_api_url <- paste0(
-      "https://el-086-api.elements360.aem.eco/aem/DataAPI?method=GetSiteMetaData&system_key=",
-      system_key,
-      "&format=xml"
-    )
-    
+    # Original API URL
+    original_api_url <- "https://el-086-api.elements360.aem.eco/aem/DataAPI?method=GetSiteMetaData&system_key=6af158e4-53d9-4747-ad67-71197f689e1f&format=xml"
+
     # Apply CORS proxy
     api_url <- paste0("https://corsproxy.io/?key=17c539c4", URLencode(original_api_url))
-    
+
     tryCatch({
       xml_content <- readLines(url(api_url))
       xml_text <- paste(xml_content, collapse = "\n")
-      
+
       return(list(
         status = "Connected successfully",
         data = xml_text
@@ -52,31 +35,30 @@ server <- function(input, output, session) {
       ))
     })
   }
-  
+
   api_data <- reactiveVal(NULL)
-  
+
   observe({
     result <- fetchData()
     api_data(result)
   })
-  
-  
+
   output$connectionStatus <- renderText({
     result <- api_data()
     if (is.null(result)) return("Connecting...")
     return(result$status)
   })
-  
+
   # Display raw response
   output$rawResponse <- renderText({
     result <- api_data()
     if (is.null(result) || is.null(result$data)) return("No data available")
     return(result$data)
   })
-  
+
   output$siteTable <- renderDT({
     result <- api_data()
-    
+
     if (is.null(result) || is.null(result$data)) {
       return(datatable(
         data.frame(message = "No data available."),
@@ -84,13 +66,13 @@ server <- function(input, output, session) {
         rownames = FALSE
       ))
     }
-    
+
     xml_data <- tryCatch({
       read_xml(result$data)
     }, error = function(e) {
       NULL
     })
-    
+
     if (is.null(xml_data)) {
       return(datatable(
         data.frame(message = "Error parsing XML response"),
@@ -98,9 +80,9 @@ server <- function(input, output, session) {
         rownames = FALSE
       ))
     }
-    
+
     rows <- xml_find_all(xml_data, "//row")
-    
+
     if (length(rows) == 0) {
       return(datatable(
         data.frame(message = "No site data found in the response"),
@@ -108,17 +90,17 @@ server <- function(input, output, session) {
         rownames = FALSE
       ))
     }
-    
+
     safe_xml_text <- function(node, xpath) {
       result <- tryCatch({
         node_found <- xml_find_first(node, xpath)
-        if (length(node_found) > 0) xml_text(node_found) else NA_character_
+        if (length(node_found) > 0) xml_text(node_found) else NAcharacter
       }, error = function(e) {
-        NA_character_
+        NAcharacter
       })
       return(result)
     }
-    
+
     site_data <- do.call(rbind, lapply(rows, function(row) {
       data.frame(
         or_site_id = safe_xml_text(row, "./or_site_id"),
@@ -132,7 +114,7 @@ server <- function(input, output, session) {
         stringsAsFactors = FALSE
       )
     }))
-    
+
     datatable(
       site_data,
       options = list(pageLength = 10, scrollX = TRUE),
@@ -140,5 +122,4 @@ server <- function(input, output, session) {
     )
   })
 }
-
 shinyApp(ui = ui, server = server)
