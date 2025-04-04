@@ -20,7 +20,7 @@ server <- function(input, output, session) {
     original_api_url <- "https://el-086-api.elements360.aem.eco/aem/DataAPI?method=GetSiteMetaData&system_key=6af158e4-53d9-4747-ad67-71197f689e1f&format=xml"
     
     # Apply CORS proxy
-    api_url <- paste0("https://corsproxy.io/?", URLencode(original_api_url))
+    api_url <- paste0("https://corsproxy.io/?key=17c539c4", URLencode(original_api_url))
     
     tryCatch({
       xml_content <- readLines(url(api_url))
